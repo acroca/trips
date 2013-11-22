@@ -82,6 +82,10 @@ module.exports = (grunt) ->
         files:
           '<%= files.app_coffee.dest %>': "<%= files.app_coffee.source %>"
 
+    'gh-pages':
+      options: base: 'compiled'
+      src: ['**']
+
     watch:
       options: spawn: false
       app_js:
@@ -135,6 +139,7 @@ module.exports = (grunt) ->
   grunt.loadNpmTasks "grunt-contrib-coffee"
   grunt.loadNpmTasks "grunt-contrib-clean"
   grunt.loadNpmTasks "grunt-contrib-copy"
+  grunt.loadNpmTasks "grunt-gh-pages"
   grunt.loadNpmTasks "grunt-sass"
   grunt.loadNpmTasks "grunt-contrib-watch"
 
@@ -160,4 +165,5 @@ module.exports = (grunt) ->
   ]
 
   grunt.registerTask "build", ["clean:all", "compile:app"]
+  grunt.registerTask "deploy", ["build", "gh-pages"]
   grunt.registerTask "default", ["build", "configureRewriteRules", "connect:dev", "watch"]
