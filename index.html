@@ -1,0 +1,66 @@
+<!doctype html>
+<html ng-app="trips" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Trips!</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+  </head>
+  <body>
+    <div id="app" ui-view>
+      <div class="loading"></div>
+    </div>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script src="/scripts/vendor.js"></script>
+    <script src="/scripts/app.js"></script>
+  </body>
+</html>
+
+<script type="text/ng-template" id="app.html">
+<section id="sidebar" ui-view="sidebar"></section>
+<section id="main" ui-view="main"></section>
+
+</script>
+<script type="text/ng-template" id="map.html">
+<div
+  class="google-map"
+  center="center"
+  zoom="zoom"
+  fit="{{fit}}"
+  markers="markers"
+  latitude="clickedLatitudeProperty"
+  longitude="clickedLongitudeProperty"
+  draggable="true"
+  fit="false"
+  events="eventsProperty">
+</div>
+
+
+</script>
+<script type="text/ng-template" id="points.html">
+<form id="add-point" ng-submit="add_point()">
+  <input type="text" ng-model="new_point.title" placeholder="Name of the new place" ng-if="new_point.type == 'place'">
+  <input type="text" ng-model="new_point.title" placeholder="Name of the new must-see place" ng-if="new_point.type == 'must_see'">
+  <input type="text" ng-model="new_point.airport" placeholder="Name of the airport" ng-if="new_point.type == 'airport'">
+  <input type="text" ng-model="new_point.name" placeholder="Name of the hotel" ng-if="new_point.type == 'hotel'">
+
+  <div class="types">
+    Add:
+      <a href="" ng-click="set_type('airport')" ng-class="{current: new_point.type == 'airport'}">airport</a>
+      <a href="" ng-click="set_type('place')" ng-class="{current: new_point.type == 'place'}">place</a>
+      <a href="" ng-click="set_type('must_see')" ng-class="{current: new_point.type == 'must_see'}">Must see</a>
+      <a href="" ng-click="set_type('hotel')" ng-class="{current: new_point.type == 'hotel'}">hotel</a>
+  </div>
+</form>
+<h1>My map</h1>
+<div id="points">
+  <div ng-repeat="point in points" class="point">
+    <img ng-src="{{point.icon}}" />
+    <h2>{{point.caption()}}</h2>
+    <div class="actions">
+      <a href="" ng-click="set_position(point)">Place</a>
+      <a href="" ng-click="delete_point(point)">Delete</a>
+    </div>
+  </div>
+</div>
+
+</script>
