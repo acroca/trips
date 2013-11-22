@@ -1,0 +1,25 @@
+<form id="add-point" ng-submit="add_point()">
+  <input type="text" ng-model="new_point.title" placeholder="Name of the new place" ng-if="new_point.type == 'place'">
+  <input type="text" ng-model="new_point.title" placeholder="Name of the new must-see place" ng-if="new_point.type == 'must_see'">
+  <input type="text" ng-model="new_point.airport" placeholder="Name of the airport" ng-if="new_point.type == 'airport'">
+  <input type="text" ng-model="new_point.name" placeholder="Name of the hotel" ng-if="new_point.type == 'hotel'">
+
+  <div class="types">
+    Add:
+      <a href="" ng-click="set_type('airport')" ng-class="{current: new_point.type == 'airport'}">airport</a>
+      <a href="" ng-click="set_type('place')" ng-class="{current: new_point.type == 'place'}">place</a>
+      <a href="" ng-click="set_type('must_see')" ng-class="{current: new_point.type == 'must_see'}">Must see</a>
+      <a href="" ng-click="set_type('hotel')" ng-class="{current: new_point.type == 'hotel'}">hotel</a>
+  </div>
+</form>
+<h1>My map</h1>
+<div id="points">
+  <div ng-repeat="point in points" class="point">
+    <img ng-src="{{point.icon}}" />
+    <h2>{{point.caption()}}</h2>
+    <div class="actions">
+      <a href="" ng-click="set_position(point)">Place</a>
+      <a href="" ng-click="delete_point(point)">Delete</a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+@import 'normalize';
+@import 'flat-ui';
+
+html, body, #app, #main { height: 100%; }
+a{
+  color: #1abc9c;
+  text-decoration: none;
+  &.current, &:hover{
+    color: #116D5B;
+  }
+}
+
+
+// flexing
+#app{
+  display: flex;
+}
+#sidebar{
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+#main{
+  display: flex;
+  flex: 1;
+
+  .google-map{
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// Points
+
+#add-point{
+  width: 100%;
+  display: block;
+  height: 37px + (20px * 2) + 1px;
+  border-bottom: 2px solid #dce4ec;
+  input {
+    display: block;
+    margin: 20px auto 0 auto;
+    width: 80%;
+  }
+}
+
+#points {
+  display: block;
+  overflow-y: scroll;
+  flex: 1;
+
+  .point {
+    margin: 3px 5px;
+    height: 32px;
+    line-height: 32px;
+    position: relative;
+
+    img{
+      width: 32px;
+      display: inline-block;
+      float: left;
+    }
+    h2{
+      position: absolute;
+      left: 32px;
+      font-size: 1.2em;
+      width: 230px;
+      margin: 0;
+    }
+    .actions{
+      float: right;
+      text-align: right;
+      display: none;
+    }
+    &:hover .actions{ display: inline; }
+  }
+}
