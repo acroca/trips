@@ -16,5 +16,11 @@ app.config ["$stateProvider", "$urlRouterProvider", ($stateProvider, $urlRouterP
           templateUrl: "points.html"
           controller: "PointsCtrl"
 
+    .state "app.load_save",
+      url: '/load_save',
+      views:
+        "main@app":
+          templateUrl: "load_save.html"
+          controller: "LoadSaveCtrl"
 ]
 
