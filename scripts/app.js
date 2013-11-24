@@ -7,7 +7,7 @@
 
   app.config([
     '$locationProvider', function($locationProvider) {
-      return $locationProvider.html5Mode(true).hashPrefix('!');
+      return $locationProvider.html5Mode(false).hashPrefix('!');
     }
   ]);
 
@@ -29,6 +29,23 @@
           $scope.setting_pos_for.longitude = lng;
           return $scope.setting_pos_for = null;
         });
+      };
+    }
+  ]);
+
+  app.controller('LoadSaveCtrl', [
+    "$scope", "Point", function($scope, Point) {
+      $scope.save_string = angular.toJson($scope.points);
+      return $scope.load = function() {
+        var parsed, point, _i, _len, _results;
+        parsed = Point.parse($scope.load_string);
+        $scope.points.splice(0, $scope.points.length);
+        _results = [];
+        for (_i = 0, _len = parsed.length; _i < _len; _i++) {
+          point = parsed[_i];
+          _results.push($scope.points.push(point));
+        }
+        return _results;
       };
     }
   ]);
@@ -76,9 +93,23 @@
 
   app.controller('PointsCtrl', [
     "$scope", "Point", function($scope, Point) {
+      var k, m;
       $scope.new_point = {
         type: 'place'
       };
+      $scope.types = (function() {
+        var _ref, _results;
+        _ref = Point.mapping;
+        _results = [];
+        for (k in _ref) {
+          m = _ref[k];
+          _results.push({
+            name: m.name,
+            type: k
+          });
+        }
+        return _results;
+      })();
       $scope.set_type = function(type) {
         return $scope.new_point = {
           type: type
@@ -122,12 +153,20 @@
             controller: "PointsCtrl"
           }
         }
+      }).state("app.load_save", {
+        url: '/load_save',
+        views: {
+          "main@app": {
+            templateUrl: "load_save.html",
+            controller: "LoadSaveCtrl"
+          }
+        }
       });
     }
   ]);
 
   app.factory('Point', function() {
-    var Airport, Hotel, MustSee, Place, Point, _ref, _ref1, _ref2, _ref3;
+    var Airport, Camping, CarRental, Ferry, Hotel, MustSee, Place, Point, Restaurant, mapping, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
     Point = (function() {
       function Point(object) {
         var k, v;
@@ -138,20 +177,13 @@
         this;
       }
 
+      Point.prototype.caption = function() {
+        return this.name;
+      };
+
       Point.build = function(object) {
         var klass;
-        klass = (function() {
-          switch (object.type) {
-            case 'airport':
-              return Airport;
-            case 'place':
-              return Place;
-            case 'must_see':
-              return MustSee;
-            case 'hotel':
-              return Hotel;
-          }
-        })();
+        klass = mapping[object.type].klass;
         return new klass(object);
       };
 
@@ -166,10 +198,6 @@
         return _ref;
       }
 
-      Airport.prototype.caption = function() {
-        return this.airport;
-      };
-
       Airport.prototype.icon = 'http://maps.google.com/mapfiles/ms/icons/plane.png';
 
       return Airport;
@@ -182,10 +210,6 @@
         _ref1 = Place.__super__.constructor.apply(this, arguments);
         return _ref1;
       }
-
-      Place.prototype.caption = function() {
-        return this.title;
-      };
 
       Place.prototype.icon = 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
 
@@ -213,16 +237,99 @@
         return _ref3;
       }
 
-      Hotel.prototype.caption = function() {
-        return this.name;
-      };
-
       Hotel.prototype.icon = 'http://maps.google.com/mapfiles/ms/micons/homegardenbusiness.png';
 
       return Hotel;
 
     })(Point);
+    Restaurant = (function(_super) {
+      __extends(Restaurant, _super);
+
+      function Restaurant() {
+        _ref4 = Restaurant.__super__.constructor.apply(this, arguments);
+        return _ref4;
+      }
+
+      Restaurant.prototype.icon = 'http://maps.google.com/mapfiles/ms/micons/restaurant.png';
+
+      return Restaurant;
+
+    })(Point);
+    CarRental = (function(_super) {
+      __extends(CarRental, _super);
+
+      function CarRental() {
+        _ref5 = CarRental.__super__.constructor.apply(this, arguments);
+        return _ref5;
+      }
+
+      CarRental.prototype.icon = 'http://maps.google.com/mapfiles/ms/micons/cabs.png';
+
+      return CarRental;
+
+    })(Point);
+    Ferry = (function(_super) {
+      __extends(Ferry, _super);
+
+      function Ferry() {
+        _ref6 = Ferry.__super__.constructor.apply(this, arguments);
+        return _ref6;
+      }
+
+      Ferry.prototype.icon = 'http://maps.google.com/mapfiles/ms/micons/ferry.png';
+
+      return Ferry;
+
+    })(Point);
+    Camping = (function(_super) {
+      __extends(Camping, _super);
+
+      function Camping() {
+        _ref7 = Camping.__super__.constructor.apply(this, arguments);
+        return _ref7;
+      }
+
+      Camping.prototype.icon = 'http://maps.google.com/mapfiles/ms/micons/campground.png';
+
+      return Camping;
+
+    })(Point);
+    mapping = {
+      airport: {
+        name: "Airport",
+        klass: Airport
+      },
+      must_see: {
+        name: "Must",
+        klass: MustSee
+      },
+      place: {
+        name: "Normal",
+        klass: Place
+      },
+      hotel: {
+        name: "Hotel",
+        klass: Hotel
+      },
+      restaurant: {
+        name: "Restaurant",
+        klass: Restaurant
+      },
+      car_rental: {
+        name: "Car rental",
+        klass: CarRental
+      },
+      ferry: {
+        name: "Ferry",
+        klass: Ferry
+      },
+      camping: {
+        name: "Camping",
+        klass: Camping
+      }
+    };
     return {
+      mapping: mapping,
       parse: function(json) {
         var o, objects, _i, _len, _results;
         objects = JSON.parse(json);
