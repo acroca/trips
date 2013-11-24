@@ -38,10 +38,15 @@ a{
   display: block;
   height: 37px + (20px * 2) + 1px;
   border-bottom: 2px solid #dce4ec;
+  select{
+    margin: 29px 5px 0px 15px;
+    float: left;
+  }
   input {
+    margin: 20px 0px 20px 0px;
     display: block;
-    margin: 20px auto 0 auto;
-    width: 80%;
+    float: left;
+    width: 260px;
   }
 }
 

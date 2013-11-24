@@ -2,6 +2,8 @@ app.controller 'PointsCtrl', ["$scope", "Point", ($scope, Point) ->
 
   $scope.new_point = {type: 'place'}
 
+  $scope.types = ({name: m.name, type: k} for k,m of Point.mapping)
+
   $scope.set_type = (type) ->
     $scope.new_point = {type: type}
 
