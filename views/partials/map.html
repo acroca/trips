@@ -1,13 +1,11 @@
 <div
   class="google-map"
-  center="center"
-  zoom="zoom"
-  fit="{{fit}}"
-  markers="markers"
-  latitude="clickedLatitudeProperty"
-  longitude="clickedLongitudeProperty"
+  center="map.center"
+  events="map.events"
   draggable="true"
-  fit="false"
-  events="eventsProperty">
+  dragging="map.dragging"
+  zoom="map.zoom">
+  <markers models="map.markers" coords="'self'" icon="'icon'" fit='map.fit'>
+  </markers>
 </div>
 

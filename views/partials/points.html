@@ -8,6 +8,7 @@
     <img ng-src="{{point.icon}}" />
     <h2>{{point.name}}</h2>
     <div class="actions">
+      <a href="" ng-click="zoom_location(point.latitude, point.longitude)">Zoom</a>
       <a href="" ng-click="set_position(point)">Place</a>
       <a href="" ng-click="delete_point(point)">Delete</a>
     </div>

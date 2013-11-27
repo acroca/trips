@@ -16,7 +16,6 @@ app.controller 'PointsCtrl', ["$scope", "Point", ($scope, Point) ->
     return if idx == -1
     $scope.points.splice(idx, 1)
 
-
   $scope.set_position = (point) ->
     $scope.start_set_pos point
 ]
