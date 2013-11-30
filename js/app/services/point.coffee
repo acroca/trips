@@ -1,4 +1,5 @@
 app.factory 'Point', ->
+
   class Point
     constructor: (object) ->
       @[k] = v for k,v of object
