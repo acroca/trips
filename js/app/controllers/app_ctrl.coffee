@@ -33,9 +33,7 @@ app.controller 'AppCtrl', ["$scope", "DataStorage", ($scope, DataStorage) ->
     if $scope.editing_route
       $scope.$apply ->
         point_idx = $scope.points.indexOf(point)
-        console.log('''===> point_idx: ''', point_idx)
         idx = $scope.editing_route.points.indexOf(point_idx)
-        console.log('''===> idx: ''', idx)
         if idx > -1
           $scope.editing_route.points.splice(idx, 1)
         else
