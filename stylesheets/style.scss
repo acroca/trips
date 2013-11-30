@@ -60,7 +60,7 @@ a{
   }
 }
 
-#points {
+#points, #routes {
   display: block;
   overflow-y: scroll;
   flex: 1;
@@ -86,8 +86,6 @@ a{
     .actions{
       float: right;
       text-align: right;
-      display: none;
     }
-    &:hover .actions{ display: inline; }
   }
 }

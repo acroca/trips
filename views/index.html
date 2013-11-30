@@ -6,10 +6,58 @@
     <link rel="stylesheet" href="stylesheets/style.css">
   </head>
   <body>
-    <div id="app" ui-view>
-      <div class="loading"></div>
+    <div id="app" ng-controller="AppCtrl">
+      <section id="sidebar" ui-view="sidebar" ng-controller="PointsCtrl">
+        <form id="add-point" ng-submit="add_point()">
+          <select ng-model="new_point.type" ng-options="type.type as type.name for type in types"></select>
+          <input type="text" ng-model="new_point.name" placeholder="Name of the new place">
+        </form>
+        <h1>My places</h1>
+        <div id="points">
+          <div ng-repeat="point in points" class="point">
+            <img ng-src="{{point.icon}}" />
+            <h2>{{point.name}}</h2>
+            <div class="actions">
+              <a href="" ng-click="zoom_location(point.latitude, point.longitude)">Zoom</a>
+              <a href="" ng-click="set_position(point)">Place</a>
+              <a href="" ng-click="delete_point(point)">Delete</a>
+            </div>
+          </div>
+        </div>
+
+        <h1>My routes</h1>
+        <div id="routes">
+          <div ng-repeat="route in routes" class="route">
+            <h2>{{route.name}}</h2>
+            <div class="actions">
+              <a href="" ng-click="edit_route(route)">Edit</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="main" ui-view="main" ng-controller="MapCtrl">
+        <div
+          class="google-map"
+          center="map.center"
+          events="map.events"
+          draggable="true"
+          dragging="map.dragging"
+          options="map.options"
+          zoom="map.zoom">
+
+          <markers models="map.markers" coords="'self'" icon="'icon'" fit='map.fit' optimized="false" ng-if="map.fit">
+          </markers>
+
+          <marker ng-repeat="m in map.markers" coords="m" icon="m.icon" optimized="false" ng-if="!map.fit">
+          </marker>
+
+          <polyline ng-repeat="p in map.polylines" path="p.path" stroke="p.stroke" visible="true"
+                    geodesic='false' editable="false" draggable="false"></polyline>
+        </div>
+      </section>
     </div>
-    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=weather&sensor=false&language=en&v=3.13"></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=weather&sensor=false&language=en&v=3.14"></script>
     <script src="scripts/vendor.js"></script>
     <script src="scripts/app.js"></script>
   </body>
