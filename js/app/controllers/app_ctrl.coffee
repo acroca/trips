@@ -3,8 +3,8 @@ app.controller 'AppCtrl', ["$scope", "PointStorage", ($scope, PointStorage) ->
 
   $scope.points = PointStorage.load()
   $scope.routes = [
-    {name: "Route 1", color: "#ff0000", points: $scope.points[0..1]}
-    {name: "Route 2", color: "#0000ff", points: $scope.points[2..3]}
+    # {name: "Route 1", color: "#ff0000", points: $scope.points[0..1]}
+    # {name: "Route 2", color: "#0000ff", points: $scope.points[2..3]}
   ]
   $scope.$watch 'points', (newVal) ->
     PointStorage.save(newVal)
