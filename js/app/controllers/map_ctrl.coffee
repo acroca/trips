@@ -11,6 +11,7 @@ app.controller 'MapCtrl', ["$q", "$scope", "$log", ($q, $scope, $log) ->
 
 
   $scope.$watch 'points', (newVal) ->
+    return unless newVal?
     $scope.map.fit = false if $scope.map.markers.length > 0
 
     $scope.map.markers =
@@ -22,7 +23,8 @@ app.controller 'MapCtrl', ["$q", "$scope", "$log", ($q, $scope, $log) ->
   , true
 
   $scope.$watch 'routes', (newVal) ->
-    $scope.map.polylines = for route in newVal
+    return unless newVal?
+    $scope.map.polylines = for route in newVal when route.points.length > 0
       path:
         for point in route.points when point.latitude?
           latitude: point.latitude

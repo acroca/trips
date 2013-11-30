@@ -27,12 +27,14 @@
           </div>
         </div>
 
-        <h1>My routes</h1>
+        <h1>My routes<small><a href="#" ng-click="new_route()">Add</a></small></h1>
         <div id="routes">
           <div ng-repeat="route in routes" class="route">
+            <div class="color" style="background-color: {{route.color}}"></div>
             <h2>{{route.name}}</h2>
             <div class="actions">
               <a href="" ng-click="edit_route(route)">Edit</a>
+              <a href="" ng-click="delete_route(route)">Delete</a>
             </div>
           </div>
         </div>

@@ -10,6 +10,9 @@ a{
   }
 }
 
+h1 small{
+  font-size: .4em;
+}
 
 .angular-google-map-container {
   width: 100%;
@@ -65,16 +68,21 @@ a{
   overflow-y: scroll;
   flex: 1;
 
-  .point {
+  .point, .route {
     margin: 3px 5px;
     height: 32px;
     line-height: 32px;
     position: relative;
 
-    img{
+
+    img, .color{
       width: 32px;
+      height: 32px;
       display: inline-block;
       float: left;
+    }
+    .color{
+      border-radius: 5px;
     }
     h2{
       position: absolute;

@@ -46,8 +46,7 @@ app.factory 'Point', ->
 
   mapping: mapping
 
-  parse: (json) ->
-    objects = JSON.parse(json)
+  parse: (objects) ->
     @build(o) for o in objects
 
   build: (object) ->
