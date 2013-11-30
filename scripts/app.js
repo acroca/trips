@@ -3,7 +3,7 @@
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  app = angular.module('trips', ["ui.router", 'google-maps']);
+  app = angular.module('trips', ['google-maps']);
 
   app.config([
     '$locationProvider', function($locationProvider) {
@@ -13,14 +13,16 @@
 
   app.controller('AppCtrl', [
     "$scope", "PointStorage", function($scope, PointStorage) {
+      $scope.map = {};
       $scope.points = PointStorage.load();
+      $scope.routes = [];
       $scope.$watch('points', function(newVal) {
         return PointStorage.save(newVal);
       }, true);
       $scope.start_set_pos = function(point) {
         return $scope.setting_pos_for = point;
       };
-      return $scope.clicked_pos = function(lat, lng) {
+      $scope.clicked_pos = function(lat, lng) {
         if ($scope.setting_pos_for == null) {
           return;
         }
@@ -30,48 +32,43 @@
           return $scope.setting_pos_for = null;
         });
       };
-    }
-  ]);
-
-  app.controller('LoadSaveCtrl', [
-    "$scope", "Point", function($scope, Point) {
-      $scope.save_string = angular.toJson($scope.points);
-      return $scope.load = function() {
-        var parsed, point, _i, _len, _results;
-        parsed = Point.parse($scope.load_string);
-        $scope.points.splice(0, $scope.points.length);
-        _results = [];
-        for (_i = 0, _len = parsed.length; _i < _len; _i++) {
-          point = parsed[_i];
-          _results.push($scope.points.push(point));
-        }
-        return _results;
+      return $scope.zoom_location = function(lat, lng) {
+        $scope.map.center.latitude = lat;
+        $scope.map.center.longitude = lng;
+        return $scope.map.zoom = 15;
       };
     }
   ]);
 
   app.controller('MapCtrl', [
-    "$q", "$scope", "$state", "$log", function($q, $scope, $state, $log) {
-      $scope.center = {
+    "$q", "$scope", "$log", function($q, $scope, $log) {
+      $scope.map.markers = [];
+      $scope.map.polylines = [];
+      $scope.map.zoom = 2;
+      $scope.map.center = {
         latitude: 36,
         longitude: 0
       };
-      $scope.zoom = 2;
-      $scope.markers = [];
-      $scope.fit = true;
+      $scope.map.fit = true;
+      $scope.map.events = {
+        click: function(mapModel, eventName, originalEventArgs) {
+          var latLng;
+          latLng = originalEventArgs[0].latLng;
+          return $scope.clicked_pos(latLng.lat(), latLng.lng());
+        }
+      };
       $scope.$watch('points', function(newVal) {
         var point;
-        if ($scope.markers.length > 0) {
-          $scope.fit = false;
+        if ($scope.map.markers.length > 0) {
+          $scope.map.fit = false;
         }
-        return $scope.markers = (function() {
+        return $scope.map.markers = (function() {
           var _i, _len, _results;
           _results = [];
           for (_i = 0, _len = newVal.length; _i < _len; _i++) {
             point = newVal[_i];
             if (point.latitude != null) {
               _results.push({
-                infoWindow: point.caption(),
                 latitude: point.latitude,
                 longitude: point.longitude,
                 icon: point.icon
@@ -81,13 +78,38 @@
           return _results;
         })();
       }, true);
-      return $scope.eventsProperty = {
-        click: function(mapModel, eventName, originalEventArgs) {
-          var latLng;
-          latLng = originalEventArgs[0].latLng;
-          return $scope.clicked_pos(latLng.lat(), latLng.lng());
-        }
-      };
+      return $scope.$watch('routes', function(newVal) {
+        var point, route;
+        return $scope.map.polylines = (function() {
+          var _i, _len, _results;
+          _results = [];
+          for (_i = 0, _len = newVal.length; _i < _len; _i++) {
+            route = newVal[_i];
+            _results.push({
+              path: (function() {
+                var _j, _len1, _ref, _results1;
+                _ref = route.points;
+                _results1 = [];
+                for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+                  point = _ref[_j];
+                  if (point.latitude != null) {
+                    _results1.push({
+                      latitude: point.latitude,
+                      longitude: point.longitude
+                    });
+                  }
+                }
+                return _results1;
+              })(),
+              stroke: {
+                color: route.color,
+                weight: 3
+              }
+            });
+          }
+          return _results;
+        })();
+      }, true);
     }
   ]);
 
@@ -132,36 +154,6 @@
       return $scope.set_position = function(point) {
         return $scope.start_set_pos(point);
       };
-    }
-  ]);
-
-  app.config([
-    "$stateProvider", "$urlRouterProvider", function($stateProvider, $urlRouterProvider) {
-      $urlRouterProvider.otherwise("/");
-      return $stateProvider.state('app', {
-        templateUrl: 'app.html',
-        controller: "AppCtrl"
-      }).state('app.main', {
-        url: '/',
-        views: {
-          "main@app": {
-            templateUrl: "map.html",
-            controller: "MapCtrl"
-          },
-          "sidebar@app": {
-            templateUrl: "points.html",
-            controller: "PointsCtrl"
-          }
-        }
-      }).state("app.load_save", {
-        url: '/load_save',
-        views: {
-          "main@app": {
-            templateUrl: "load_save.html",
-            controller: "LoadSaveCtrl"
-          }
-        }
-      });
     }
   ]);
 
