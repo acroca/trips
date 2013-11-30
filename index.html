@@ -27,12 +27,15 @@
           </div>
         </div>
 
-        <h1>My routes</h1>
+        <h1>My routes<small><a href="#" ng-click="new_route()">Add</a></small></h1>
         <div id="routes">
           <div ng-repeat="route in routes" class="route">
+            <div class="color" style="background-color: {{route.color}}"></div>
             <h2>{{route.name}}</h2>
             <div class="actions">
-              <a href="" ng-click="edit_route(route)">Edit</a>
+              <a href="" ng-click="start_edit_route(route)" ng-if="editing_route != route">Edit</a>
+              <a href="" ng-click="stop_edit_route()" ng-if="editing_route == route">Finish</a>
+              <a href="" ng-click="delete_route(route)">Delete</a>
             </div>
           </div>
         </div>
@@ -48,10 +51,10 @@
           options="map.options"
           zoom="map.zoom">
 
-          <markers models="map.markers" coords="'self'" icon="'icon'" fit='map.fit' optimized="false" ng-if="map.fit">
+          <markers models="map.markers" coords="'self'" icon="'icon'" fit='map.fit' optimized="false" ng-if="map.fit" click="'on_clicked'">
           </markers>
 
-          <marker ng-repeat="m in map.markers" coords="m" icon="m.icon" optimized="false" ng-if="!map.fit">
+          <marker ng-repeat="m in map.markers" coords="m" icon="m.icon" optimized="false" ng-if="!map.fit" click="m.on_clicked">
           </marker>
 
           <polyline ng-repeat="p in map.polylines" path="p.path" stroke="p.stroke" visible="true"

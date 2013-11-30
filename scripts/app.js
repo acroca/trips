@@ -1,5 +1,5 @@
 (function() {
-  var app,
+  var app, get_random_color,
     __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -12,25 +12,51 @@
   ]);
 
   app.controller('AppCtrl', [
-    "$scope", "PointStorage", function($scope, PointStorage) {
+    "$scope", "DataStorage", function($scope, DataStorage) {
+      var data;
       $scope.map = {};
-      $scope.points = PointStorage.load();
-      $scope.routes = [];
+      data = DataStorage.load();
+      $scope.points = data.points;
+      $scope.routes = data.routes;
       $scope.$watch('points', function(newVal) {
-        return PointStorage.save(newVal);
+        return DataStorage.save(data);
+      }, true);
+      $scope.$watch('routes', function(newVal) {
+        return DataStorage.save(data);
       }, true);
       $scope.start_set_pos = function(point) {
+        $scope.editing_route = null;
         return $scope.setting_pos_for = point;
       };
+      $scope.start_edit_route = function(route) {
+        $scope.setting_pos_for = null;
+        return $scope.editing_route = route;
+      };
+      $scope.stop_edit_route = function() {
+        return $scope.editing_route = null;
+      };
       $scope.clicked_pos = function(lat, lng) {
-        if ($scope.setting_pos_for == null) {
-          return;
+        if ($scope.setting_pos_for != null) {
+          return $scope.$apply(function() {
+            $scope.setting_pos_for.latitude = lat;
+            $scope.setting_pos_for.longitude = lng;
+            return $scope.setting_pos_for = null;
+          });
         }
-        return $scope.$apply(function() {
-          $scope.setting_pos_for.latitude = lat;
-          $scope.setting_pos_for.longitude = lng;
-          return $scope.setting_pos_for = null;
-        });
+      };
+      $scope.clicked_point = function(point) {
+        if ($scope.editing_route) {
+          return $scope.$apply(function() {
+            var idx, point_idx;
+            point_idx = $scope.points.indexOf(point);
+            idx = $scope.editing_route.points.indexOf(point_idx);
+            if (idx > -1) {
+              return $scope.editing_route.points.splice(idx, 1);
+            } else {
+              return $scope.editing_route.points.push(point_idx);
+            }
+          });
+        }
       };
       return $scope.zoom_location = function(lat, lng) {
         $scope.map.center.latitude = lat;
@@ -59,6 +85,9 @@
       };
       $scope.$watch('points', function(newVal) {
         var point;
+        if (newVal == null) {
+          return;
+        }
         if ($scope.map.markers.length > 0) {
           $scope.map.fit = false;
         }
@@ -67,51 +96,71 @@
           _results = [];
           for (_i = 0, _len = newVal.length; _i < _len; _i++) {
             point = newVal[_i];
-            if (point.latitude != null) {
-              _results.push({
-                latitude: point.latitude,
-                longitude: point.longitude,
-                icon: point.icon
-              });
+            if ((point != null ? point.latitude : void 0) != null) {
+              _results.push((function(point) {
+                return {
+                  latitude: point.latitude,
+                  longitude: point.longitude,
+                  icon: point.icon,
+                  on_clicked: function() {
+                    return $scope.clicked_point(point);
+                  }
+                };
+              })(point));
             }
           }
           return _results;
         })();
       }, true);
       return $scope.$watch('routes', function(newVal) {
-        var point, route;
+        var point_id, route;
+        if (newVal == null) {
+          return;
+        }
         return $scope.map.polylines = (function() {
           var _i, _len, _results;
           _results = [];
           for (_i = 0, _len = newVal.length; _i < _len; _i++) {
             route = newVal[_i];
-            _results.push({
-              path: (function() {
-                var _j, _len1, _ref, _results1;
-                _ref = route.points;
-                _results1 = [];
-                for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-                  point = _ref[_j];
-                  if (point.latitude != null) {
-                    _results1.push({
-                      latitude: point.latitude,
-                      longitude: point.longitude
-                    });
+            if (route.points.length > 1) {
+              _results.push({
+                path: (function() {
+                  var _j, _len1, _ref, _results1;
+                  _ref = route.points;
+                  _results1 = [];
+                  for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+                    point_id = _ref[_j];
+                    if ($scope.points[point_id].latitude != null) {
+                      _results1.push({
+                        latitude: $scope.points[point_id].latitude,
+                        longitude: $scope.points[point_id].longitude
+                      });
+                    }
                   }
+                  return _results1;
+                })(),
+                stroke: {
+                  color: route.color,
+                  weight: 3
                 }
-                return _results1;
-              })(),
-              stroke: {
-                color: route.color,
-                weight: 3
-              }
-            });
+              });
+            }
           }
           return _results;
         })();
       }, true);
     }
   ]);
+
+  get_random_color = function() {
+    var color, letters, _i;
+    letters = '0123456789ABCDEF'.split('');
+    color = '#';
+    for (_i = 1; _i <= 6; _i++) {
+      color += letters[Math.round(Math.random() * 15)];
+    }
+    return color;
+  };
 
   app.controller('PointsCtrl', [
     "$scope", "Point", function($scope, Point) {
@@ -137,6 +186,18 @@
           type: type
         };
       };
+      $scope.new_route = function() {
+        return $scope.routes.push({
+          name: "Route " + $scope.routes.length,
+          color: get_random_color(),
+          points: []
+        });
+      };
+      $scope.delete_route = function(route) {
+        var idx;
+        idx = $scope.routes.indexOf(route);
+        return $scope.routes.splice(idx, 1);
+      };
       $scope.add_point = function() {
         $scope.points.push(Point.build($scope.new_point));
         return $scope.new_point = {
@@ -153,6 +214,27 @@
       };
       return $scope.set_position = function(point) {
         return $scope.start_set_pos(point);
+      };
+    }
+  ]);
+
+  app.factory('DataStorage', [
+    "Point", function(Point) {
+      return {
+        save: function(data) {
+          return localStorage.data = angular.toJson(data);
+        },
+        load: function() {
+          var data;
+          if (localStorage.data == null) {
+            return {};
+          }
+          data = JSON.parse(localStorage.data);
+          data.routes || (data.routes = []);
+          data.points || (data.points = []);
+          data.points = Point.parse(data.points);
+          return data;
+        }
       };
     }
   ]);
@@ -322,9 +404,8 @@
     };
     return {
       mapping: mapping,
-      parse: function(json) {
-        var o, objects, _i, _len, _results;
-        objects = JSON.parse(json);
+      parse: function(objects) {
+        var o, _i, _len, _results;
         _results = [];
         for (_i = 0, _len = objects.length; _i < _len; _i++) {
           o = objects[_i];
@@ -337,21 +418,5 @@
       }
     };
   });
-
-  app.factory('PointStorage', [
-    "Point", function(Point) {
-      return {
-        save: function(points) {
-          return localStorage.points = angular.toJson(points);
-        },
-        load: function() {
-          if (localStorage.points == null) {
-            return [];
-          }
-          return Point.parse(localStorage.points);
-        }
-      };
-    }
-  ]);
 
 }).call(this);
