@@ -31,8 +31,14 @@
         <div id="routes">
           <div ng-repeat="route in routes" class="route">
             <div class="color" style="background-color: {{route.color}}"></div>
-            <h2>{{route.name}}</h2>
+            <h2>
+              <span ng-if="!route.editing">{{route.name}}</span>
+              <form ng-if="route.editing" ng-submit="route.editing=false">
+                <input type="text" ng-model="route.name" ng-required/>
+              </form>
+            </h2>
             <div class="actions">
+              <a href="" ng-click="route.editing = true" ng-if="!route.editing">Rename</a>
               <a href="" ng-click="start_edit_route(route)" ng-if="editing_route != route">Edit</a>
               <a href="" ng-click="stop_edit_route()" ng-if="editing_route == route">Finish</a>
               <a href="" ng-click="delete_route(route)">Delete</a>
