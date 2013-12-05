@@ -107,7 +107,7 @@ h1 small{
 
 #pac-input {
   border: 1px solid transparent;
-  border-radius: 2px 0 0 2px;
+  border-radius: 2px;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   height: 32px;
@@ -141,4 +141,24 @@ h1 small{
   padding: 2px;
   border-radius: 2px;
   white-space: nowrap;
+}
+
+#search-tooltip {
+  border: 1px solid transparent;
+  border-radius: 2px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  background-color: #fff;
+  padding: 5px;
+
+
+  position: relative;
+  width: 400px;
+  height: 200px;
+  margin: auto;
+  .close{
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  }
 }

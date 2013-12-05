@@ -11,28 +11,44 @@ app.factory 'Point', ->
       new klass(object)
 
   class Airport extends Point
-    icon: 'http://maps.google.com/mapfiles/ms/icons/plane.png'
+    icon = 'http://maps.google.com/mapfiles/ms/icons/plane.png'
+    icon: icon
+    @icon: icon
 
   class Place extends Point
-    icon: 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
+    icon = 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png'
+    icon: icon
+    @icon: icon
 
   class MustSee extends Place
-    icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+    icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png'
+    icon: icon
+    @icon: icon
 
   class Hotel extends Point
-    icon: 'http://maps.google.com/mapfiles/ms/micons/homegardenbusiness.png'
+    icon = 'http://maps.google.com/mapfiles/ms/micons/homegardenbusiness.png'
+    icon: icon
+    @icon: icon
 
   class Restaurant extends Point
-    icon: 'http://maps.google.com/mapfiles/ms/micons/restaurant.png'
+    icon = 'http://maps.google.com/mapfiles/ms/micons/restaurant.png'
+    icon: icon
+    @icon: icon
 
   class CarRental extends Point
-    icon: 'http://maps.google.com/mapfiles/ms/micons/cabs.png'
+    icon = 'http://maps.google.com/mapfiles/ms/micons/cabs.png'
+    icon: icon
+    @icon: icon
 
   class Ferry extends Point
-    icon: 'http://maps.google.com/mapfiles/ms/micons/ferry.png'
+    icon = 'http://maps.google.com/mapfiles/ms/micons/ferry.png'
+    icon: icon
+    @icon: icon
 
   class Camping extends Point
-    icon: 'http://maps.google.com/mapfiles/ms/micons/campground.png'
+    icon = 'http://maps.google.com/mapfiles/ms/micons/campground.png'
+    icon: icon
+    @icon: icon
 
   mapping =
     airport: {name: "Airport", klass: Airport}
@@ -43,6 +59,8 @@ app.factory 'Point', ->
     car_rental: {name: "Car rental", klass: CarRental}
     ferry: {name: "Ferry", klass: Ferry}
     camping: {name: "Camping", klass: Camping}
+  for m,o of mapping
+    o.icon = o.klass.icon
 
 
   mapping: mapping

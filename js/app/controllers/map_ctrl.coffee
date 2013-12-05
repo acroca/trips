@@ -14,7 +14,9 @@ app.controller 'MapCtrl', ["$q", "$scope", "$log", "Point", ($q, $scope, $log, P
     coords: {latitude: -41.284643475558376, longitude: 174.77874755859375}
     show: true
 
+  $scope.close_search_marker = -> $scope.clicked_search_marker = undefined
 
+  $scope.points_mapping = Point.mapping
   $scope.map.events =
     click: (mapModel, eventName, originalEventArgs) ->
       latLng = originalEventArgs[0].latLng
@@ -66,18 +68,19 @@ app.controller 'MapCtrl', ["$q", "$scope", "$log", "Point", ($q, $scope, $log, P
                   do (result) ->
                     latitude: result.geometry.location.lat()
                     longitude: result.geometry.location.lng()
-                    icon: 'http://maps.google.com/mapfiles/ms/micons/yellow-dot.png'
+                    icon: 'http://maps.google.com/mapfiles/ms/micons/purple-pushpin.png'
                     tooltip: true
                     name: result.address_components[0].long_name
-                    # on_clicked: -> @tooltip = true
-                    on_clicked: -> @add_point('must_see')
+
+                    on_clicked: ->
+                      $scope.$apply => $scope.clicked_search_marker = @
+
                     add_point: (type) ->
-                      $scope.$apply ->
-                        $scope.points.push Point.build
-                          name: result.address_components[0].long_name
-                          latitude: result.geometry.location.lat()
-                          longitude: result.geometry.location.lng()
-                          type: type
+                      $scope.points.push Point.build
+                        name: result.address_components[0].long_name
+                        latitude: result.geometry.location.lat()
+                        longitude: result.geometry.location.lng()
+                        type: type
 
             else
               console.log("===> not found: ", status);
