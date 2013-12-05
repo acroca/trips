@@ -67,8 +67,15 @@
   ]);
 
   app.controller('MapCtrl', [
-    "$q", "$scope", "$log", function($q, $scope, $log) {
+    "$q", "$scope", "$log", "Point", function($q, $scope, $log, Point) {
+      var geocoder, redraw;
+      google.maps.visualRefresh = true;
+      $scope.map.options = {
+        streetViewControl: false,
+        panControl: false
+      };
       $scope.map.markers = [];
+      $scope.map.search_results = [];
       $scope.map.polylines = [];
       $scope.map.zoom = 2;
       $scope.map.center = {
@@ -76,6 +83,13 @@
         longitude: 0
       };
       $scope.map.fit = true;
+      $scope.map.infoWindow = {
+        coords: {
+          latitude: -41.284643475558376,
+          longitude: 174.77874755859375
+        },
+        show: true
+      };
       $scope.map.events = {
         click: function(mapModel, eventName, originalEventArgs) {
           var latLng;
@@ -83,19 +97,13 @@
           return $scope.clicked_pos(latLng.lat(), latLng.lng());
         }
       };
-      $scope.$watch('points', function(newVal) {
-        var point;
-        if (newVal == null) {
-          return;
-        }
-        if ($scope.map.markers.length > 0) {
-          $scope.map.fit = false;
-        }
-        return $scope.map.markers = (function() {
+      redraw = function(points, routes) {
+        var point, point_id, route;
+        $scope.map.markers = (function() {
           var _i, _len, _results;
           _results = [];
-          for (_i = 0, _len = newVal.length; _i < _len; _i++) {
-            point = newVal[_i];
+          for (_i = 0, _len = points.length; _i < _len; _i++) {
+            point = points[_i];
             if ((point != null ? point.latitude : void 0) != null) {
               _results.push((function(point) {
                 return {
@@ -111,17 +119,11 @@
           }
           return _results;
         })();
-      }, true);
-      return $scope.$watch('routes', function(newVal) {
-        var point_id, route;
-        if (newVal == null) {
-          return;
-        }
         return $scope.map.polylines = (function() {
           var _i, _len, _results;
           _results = [];
-          for (_i = 0, _len = newVal.length; _i < _len; _i++) {
-            route = newVal[_i];
+          for (_i = 0, _len = routes.length; _i < _len; _i++) {
+            route = routes[_i];
             if (route.points.length > 1) {
               _results.push({
                 path: (function() {
@@ -130,10 +132,10 @@
                   _results1 = [];
                   for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
                     point_id = _ref[_j];
-                    if ($scope.points[point_id].latitude != null) {
+                    if (points[point_id].latitude != null) {
                       _results1.push({
-                        latitude: $scope.points[point_id].latitude,
-                        longitude: $scope.points[point_id].longitude
+                        latitude: points[point_id].latitude,
+                        longitude: points[point_id].longitude
                       });
                     }
                   }
@@ -148,7 +150,74 @@
           }
           return _results;
         })();
+      };
+      $scope.$watch('points', function(newVal) {
+        if (newVal == null) {
+          return;
+        }
+        if ($scope.map.markers.length > 0) {
+          $scope.map.fit = false;
+        }
+        return redraw(newVal, $scope.routes);
       }, true);
+      $scope.$watch('routes', function(newVal) {
+        if (newVal == null) {
+          return;
+        }
+        return redraw($scope.points, newVal);
+      }, true);
+      geocoder = new google.maps.Geocoder();
+      return $scope.search = function() {
+        var search;
+        if ($scope.search_text === "") {
+          return $scope.map.search_results = [];
+        } else {
+          search = $scope.search_text;
+          return (function(search) {
+            return geocoder.geocode({
+              address: $scope.search_text
+            }, function(results, status) {
+              if (status === google.maps.GeocoderStatus.OK) {
+                return $scope.$apply(function() {
+                  var result;
+                  return $scope.map.search_results = (function() {
+                    var _i, _len, _results;
+                    _results = [];
+                    for (_i = 0, _len = results.length; _i < _len; _i++) {
+                      result = results[_i];
+                      _results.push((function(result) {
+                        return {
+                          latitude: result.geometry.location.lat(),
+                          longitude: result.geometry.location.lng(),
+                          icon: 'http://maps.google.com/mapfiles/ms/micons/yellow-dot.png',
+                          tooltip: true,
+                          name: result.address_components[0].long_name,
+                          on_clicked: function() {
+                            return this.add_point('must_see');
+                          },
+                          add_point: function(type) {
+                            return $scope.$apply(function() {
+                              return $scope.points.push(Point.build({
+                                name: result.address_components[0].long_name,
+                                latitude: result.geometry.location.lat(),
+                                longitude: result.geometry.location.lng(),
+                                type: type
+                              }));
+                            });
+                          }
+                        };
+                      })(result));
+                    }
+                    return _results;
+                  })();
+                });
+              } else {
+                return console.log("===> not found: ", status);
+              }
+            });
+          })(search);
+        }
+      };
     }
   ]);
 
@@ -205,10 +274,18 @@
         };
       };
       $scope.delete_point = function(point) {
-        var idx;
+        var idx, p_idx, r, _i, _len, _ref;
         idx = $scope.points.indexOf(point);
         if (idx === -1) {
           return;
+        }
+        _ref = $scope.routes;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          r = _ref[_i];
+          p_idx = r.points.indexOf(idx);
+          if (p_idx > -1) {
+            r.points.splice(p_idx, 1);
+          }
         }
         return $scope.points.splice(idx, 1);
       };
