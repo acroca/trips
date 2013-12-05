@@ -37,10 +37,14 @@ h1 small{
 #main{
   display: flex;
   flex: 1;
+  position: relative;
 
   .google-map{
     width: 100%;
     height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
   }
 }
 
@@ -96,4 +100,45 @@ h1 small{
       text-align: right;
     }
   }
+}
+
+// Search
+
+
+#pac-input {
+  border: 1px solid transparent;
+  border-radius: 2px 0 0 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  height: 32px;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+
+  background-color: #fff;
+  padding: 0 11px 0 13px;
+  width: 400px;
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+  text-overflow: ellipsis;
+
+  position: absolute;
+  top: 16px;
+  left: 40px;
+}
+
+#pac-input:focus {
+  border-color: #4d90fe;
+  margin-left: -1px;
+  padding-left: 14px;  /* Regular padding-left + 1. */
+  width: 401px;
+}
+
+
+.marker-labels {
+  background-color: white;
+  border: 1px solid black;
+  padding: 2px;
+  border-radius: 2px;
+  white-space: nowrap;
 }

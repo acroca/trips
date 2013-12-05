@@ -4,8 +4,6 @@
     <meta charset="utf-8">
     <title>Trips!</title>
     <link rel="stylesheet" href="stylesheets/style.css">
-    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=weather&sensor=false&language=en&v=3.14"></script>
-    <script src="scripts/vendor.js"></script>
   </head>
   <body>
     <div id="app" ng-controller="AppCtrl">
@@ -55,19 +53,35 @@
           draggable="true"
           dragging="map.dragging"
           options="map.options"
-          zoom="map.zoom">
+          zoom="map.zoom"
+          bounds="map.bounds">
 
           <markers models="map.markers" coords="'self'" icon="'icon'" fit='map.fit' optimized="false" ng-if="map.fit" click="'on_clicked'">
           </markers>
 
-          <marker ng-repeat="m in map.markers" coords="m" icon="m.icon" optimized="false" ng-if="!map.fit" click="m.on_clicked">
+          <marker ng-repeat="m in map.markers" coords="m" icon="m.icon" optimized="false" ng-if="!map.fit" click="m.on_clicked()">
+          </marker>
+
+
+          <marker ng-repeat="m in map.search_results" coords="m" icon="m.icon" click="m.on_clicked()">
+            <marker-label content="m.name" anchor="22 0" class="marker-labels"/>
+            <!-- <window show="m.tooltip">
+              <p>This is an info window at {{ m.latitude | number:4 }}, {{ m.longitude | number:4 }}!</p>
+              <a href="#" ng-click="console.log(1)">Plane</a>
+            </window> -->
           </marker>
 
           <polyline ng-repeat="p in map.polylines" path="p.path" stroke="p.stroke" visible="true"
                     geodesic='false' editable="false" draggable="false"></polyline>
         </div>
+        <form ng-submit="search()">
+          <input id="pac-input" type="text" placeholder="Search..." ng-model="search_text" />
+        </form>
       </section>
     </div>
+
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=weather&sensor=false&language=en&v=3.13"></script>
+    <script src="scripts/vendor.js"></script>
     <script src="scripts/app.js"></script>
   </body>
 </html>

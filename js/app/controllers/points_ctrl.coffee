@@ -30,6 +30,9 @@ app.controller 'PointsCtrl', ["$scope", "Point", ($scope, Point) ->
   $scope.delete_point = (point) ->
     idx = $scope.points.indexOf(point)
     return if idx == -1
+    for r in $scope.routes
+      p_idx = r.points.indexOf(idx)
+      r.points.splice(p_idx, 1) if p_idx > -1
     $scope.points.splice(idx, 1)
 
   $scope.set_position = (point) ->
