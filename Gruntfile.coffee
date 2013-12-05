@@ -20,9 +20,6 @@ module.exports = (grunt) ->
         dest: 'compiled/scripts/app.js'
       vendor_app:
         source: [
-          "js/vendor/underscore.js"
-          "js/vendor/jquery.js"
-          "js/vendor/angular.js"
           "js/vendor/angular-google-maps.js"
         ]
         dest: "compiled/scripts/vendor.js"
