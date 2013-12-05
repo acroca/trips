@@ -43,6 +43,7 @@
             </div>
           </div>
         </div>
+
       </section>
 
       <section id="main" ui-view="main" ng-controller="MapCtrl">
@@ -77,6 +78,16 @@
         <form ng-submit="search()">
           <input id="pac-input" type="text" placeholder="Search..." ng-model="search_text" />
         </form>
+        <div id="search-tooltip" ng-if="clicked_search_marker">
+          <a href="" class="close" ng-click="close_search_marker()">close</a>
+          <h3>{{clicked_search_marker.name}}</h3>
+          <p>
+            Add it as:
+            <a href="" ng-click="clicked_search_marker.add_point(type)" ng-repeat="(type, obj) in points_mapping">
+              <img ng-src="{{obj.icon}}"/>
+            </a>
+          </p>
+        </div>
       </section>
     </div>
 

@@ -90,6 +90,10 @@
         },
         show: true
       };
+      $scope.close_search_marker = function() {
+        return $scope.clicked_search_marker = void 0;
+      };
+      $scope.points_mapping = Point.mapping;
       $scope.map.events = {
         click: function(mapModel, eventName, originalEventArgs) {
           var latLng;
@@ -189,21 +193,22 @@
                         return {
                           latitude: result.geometry.location.lat(),
                           longitude: result.geometry.location.lng(),
-                          icon: 'http://maps.google.com/mapfiles/ms/micons/yellow-dot.png',
+                          icon: 'http://maps.google.com/mapfiles/ms/micons/purple-pushpin.png',
                           tooltip: true,
                           name: result.address_components[0].long_name,
                           on_clicked: function() {
-                            return this.add_point('must_see');
+                            var _this = this;
+                            return $scope.$apply(function() {
+                              return $scope.clicked_search_marker = _this;
+                            });
                           },
                           add_point: function(type) {
-                            return $scope.$apply(function() {
-                              return $scope.points.push(Point.build({
-                                name: result.address_components[0].long_name,
-                                latitude: result.geometry.location.lat(),
-                                longitude: result.geometry.location.lng(),
-                                type: type
-                              }));
-                            });
+                            return $scope.points.push(Point.build({
+                              name: result.address_components[0].long_name,
+                              latitude: result.geometry.location.lat(),
+                              longitude: result.geometry.location.lng(),
+                              type: type
+                            }));
                           }
                         };
                       })(result));
@@ -317,7 +322,7 @@
   ]);
 
   app.factory('Point', function() {
-    var Airport, Camping, CarRental, Ferry, Hotel, MustSee, Place, Point, Restaurant, mapping, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+    var Airport, Camping, CarRental, Ferry, Hotel, MustSee, Place, Point, Restaurant, m, mapping, o, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
     Point = (function() {
       function Point(object) {
         var k, v;
@@ -342,6 +347,8 @@
 
     })();
     Airport = (function(_super) {
+      var icon;
+
       __extends(Airport, _super);
 
       function Airport() {
@@ -349,12 +356,18 @@
         return _ref;
       }
 
-      Airport.prototype.icon = 'http://maps.google.com/mapfiles/ms/icons/plane.png';
+      icon = 'http://maps.google.com/mapfiles/ms/icons/plane.png';
+
+      Airport.prototype.icon = icon;
+
+      Airport.icon = icon;
 
       return Airport;
 
     })(Point);
     Place = (function(_super) {
+      var icon;
+
       __extends(Place, _super);
 
       function Place() {
@@ -362,12 +375,18 @@
         return _ref1;
       }
 
-      Place.prototype.icon = 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
+      icon = 'http://maps.google.com/mapfiles/ms/icons/yellow-dot.png';
+
+      Place.prototype.icon = icon;
+
+      Place.icon = icon;
 
       return Place;
 
     })(Point);
     MustSee = (function(_super) {
+      var icon;
+
       __extends(MustSee, _super);
 
       function MustSee() {
@@ -375,12 +394,18 @@
         return _ref2;
       }
 
-      MustSee.prototype.icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+      icon = 'http://maps.google.com/mapfiles/ms/icons/red-dot.png';
+
+      MustSee.prototype.icon = icon;
+
+      MustSee.icon = icon;
 
       return MustSee;
 
     })(Place);
     Hotel = (function(_super) {
+      var icon;
+
       __extends(Hotel, _super);
 
       function Hotel() {
@@ -388,12 +413,18 @@
         return _ref3;
       }
 
-      Hotel.prototype.icon = 'http://maps.google.com/mapfiles/ms/micons/homegardenbusiness.png';
+      icon = 'http://maps.google.com/mapfiles/ms/micons/homegardenbusiness.png';
+
+      Hotel.prototype.icon = icon;
+
+      Hotel.icon = icon;
 
       return Hotel;
 
     })(Point);
     Restaurant = (function(_super) {
+      var icon;
+
       __extends(Restaurant, _super);
 
       function Restaurant() {
@@ -401,12 +432,18 @@
         return _ref4;
       }
 
-      Restaurant.prototype.icon = 'http://maps.google.com/mapfiles/ms/micons/restaurant.png';
+      icon = 'http://maps.google.com/mapfiles/ms/micons/restaurant.png';
+
+      Restaurant.prototype.icon = icon;
+
+      Restaurant.icon = icon;
 
       return Restaurant;
 
     })(Point);
     CarRental = (function(_super) {
+      var icon;
+
       __extends(CarRental, _super);
 
       function CarRental() {
@@ -414,12 +451,18 @@
         return _ref5;
       }
 
-      CarRental.prototype.icon = 'http://maps.google.com/mapfiles/ms/micons/cabs.png';
+      icon = 'http://maps.google.com/mapfiles/ms/micons/cabs.png';
+
+      CarRental.prototype.icon = icon;
+
+      CarRental.icon = icon;
 
       return CarRental;
 
     })(Point);
     Ferry = (function(_super) {
+      var icon;
+
       __extends(Ferry, _super);
 
       function Ferry() {
@@ -427,12 +470,18 @@
         return _ref6;
       }
 
-      Ferry.prototype.icon = 'http://maps.google.com/mapfiles/ms/micons/ferry.png';
+      icon = 'http://maps.google.com/mapfiles/ms/micons/ferry.png';
+
+      Ferry.prototype.icon = icon;
+
+      Ferry.icon = icon;
 
       return Ferry;
 
     })(Point);
     Camping = (function(_super) {
+      var icon;
+
       __extends(Camping, _super);
 
       function Camping() {
@@ -440,7 +489,11 @@
         return _ref7;
       }
 
-      Camping.prototype.icon = 'http://maps.google.com/mapfiles/ms/micons/campground.png';
+      icon = 'http://maps.google.com/mapfiles/ms/micons/campground.png';
+
+      Camping.prototype.icon = icon;
+
+      Camping.icon = icon;
 
       return Camping;
 
@@ -479,10 +532,14 @@
         klass: Camping
       }
     };
+    for (m in mapping) {
+      o = mapping[m];
+      o.icon = o.klass.icon;
+    }
     return {
       mapping: mapping,
       parse: function(objects) {
-        var o, _i, _len, _results;
+        var _i, _len, _results;
         _results = [];
         for (_i = 0, _len = objects.length; _i < _len; _i++) {
           o = objects[_i];
