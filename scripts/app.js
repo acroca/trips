@@ -311,11 +311,15 @@
           if (localStorage.data == null) {
             return {};
           }
-          data = JSON.parse(localStorage.data);
-          data.routes || (data.routes = []);
-          data.points || (data.points = []);
-          data.points = Point.parse(data.points);
-          return data;
+          try {
+            data = JSON.parse(localStorage.data);
+            data.routes || (data.routes = []);
+            data.points || (data.points = []);
+            data.points = Point.parse(data.points);
+            return data;
+          } catch (_error) {
+            return {};
+          }
         }
       };
     }
